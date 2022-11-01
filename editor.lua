@@ -1,7 +1,8 @@
 if (not require("dependency_checker")) then return end;
 
-local main = require("main")
-
+local main = require("main");
+local camera = require("camera");
+local commandsManager = require("commandsManager");
 local editor = {}
 
 local timelines = {
@@ -39,7 +40,62 @@ end
 editor.selectedKeyframe = nil;
 ---@type number
 editor.selectedKeyframeTimecode = nil;
+---@type boolean
+editor.playing = false;
 ---@type Timeline
 editor.selectedLine = main.timelines.pos.x;
+
+function commandsManager.commands.set(_, val)
+    local sk = editor.selectedKeyframe;
+    if (sk == nil) then printJson("No selected keyframe"); return end
+    local v = tonumber(val);
+    if (v == nil) then printJson("Value should be number"); return end
+    sk.value = v;
+end
+
+function commandsManager.commands.add(_, val)
+    local sk = editor.selectedKeyframe;
+    if (sk == nil) then printJson("No selected keyframe"); return end
+    local v = tonumber(val);
+    if (v == nil) then printJson("Value should be number"); return end
+    sk.value = sk.value + v;
+end
+
+function commandsManager.commands.sub(_, val)
+    local sk = editor.selectedKeyframe;
+    if (sk == nil) then printJson("No selected keyframe"); return end
+    local v = tonumber(val);
+    if (v == nil) then printJson("Value should be number"); return end
+    sk.value = sk.value - v;
+end
+
+function commandsManager.commands.clear(_)
+    local tls = main.timelines;
+    for _, group in pairs(tls) do
+        for _, timeline in pairs(group) do
+            timeline:clear();
+        end
+    end
+    editor.selectedKeyframe = nil;
+    editor.selectedKeyframeTimecode = nil;
+    printJson("All keyframes was deleted");
+end
+
+events.RENDER:register(function(delta)
+    if (editor.playing) then
+        local maxLength = 0;
+        for _, timelineGroup in pairs(main.timelines) do
+            for _, timeline in pairs(timelineGroup) do
+                maxLength = math.max(maxLength, timeline:getLenght());
+            end
+        end
+        if (main.playTime < maxLength) then
+            main.playTime = main.playTime + (delta / 20);
+        else
+            editor.playing = false;
+        end
+    end
+    editor.playing = editor.playing and camera:getMode() == "ANIMATED";
+end)
 
 return editor;

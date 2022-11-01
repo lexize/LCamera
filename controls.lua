@@ -126,6 +126,7 @@ editModeKeybinds.KeyframeAddRotZ.onPress = addKeyframe(camera.getEditRotation, m
 function editModeKeybinds.CameraRollReset.onPress() 
     local r = camera:getEditRotation();
     camera:setEditRotation(vec(r.x,r.y,0));
+    return true;
 end
 
 function editModeKeybinds.SelectNext.onPress()
@@ -209,6 +210,15 @@ function editModeKeybinds.PrevEasing.onPress()
     return true;
 end
 
+local animatedModeKeybinds = {};
+animatedModeKeybinds.TogglePlayback = keybind:create("Toggle playback", "key.keyboard.space");
+animatedModeKeybinds.TogglePlayback.enabled = false;
+function animatedModeKeybinds.TogglePlayback.onPress()
+    editor.playing = not editor.playing;
+    return true;
+end
+
+
 function editModeProcess(delta)
     local movementVector = vec(0,0,0);
     local position = camera:getEditPosition();
@@ -246,7 +256,7 @@ function editModeProcess(delta)
     if (TimelineBackward:isPressed()) then main.playTime = math.max(main.playTime - (delta * playtimeModifier), 0) end
 end
 
-function animationModeProcess(delta)
+function animatedModeProcess(delta)
     local playtimeModifier = 1;
     if (Slowdown:isPressed()) then
         if (AdditionalAction:isPressed()) then playtimeModifier = 0.02
@@ -254,8 +264,8 @@ function animationModeProcess(delta)
     elseif (AdditionalAction:isPressed()) then playtimeModifier = 10 
     end
 
-    if (TimelineForward:isPressed()) then main.playTime = main.playTime + (delta * playtimeModifier) end
-    if (TimelineBackward:isPressed()) then main.playTime = math.max(main.playTime - (delta * playtimeModifier), 0) end
+    if (TimelineForward:isPressed()) then main.playTime = main.playTime + (delta * playtimeModifier); editor.playing = false end
+    if (TimelineBackward:isPressed()) then main.playTime = math.max(main.playTime - (delta * playtimeModifier), 0); editor.playing = false end
 end
 
 function setAllState(keybinds_table, state)
@@ -269,10 +279,11 @@ events.RENDER:register(function(delta)
     local mode = camera:getMode();
     setAllState(editModeKeybinds, mode == "EDIT");
     setAllState(keybinds, mode == "EDIT" or mode == "ANIMATED");
+    setAllState(animatedModeKeybinds, mode == "ANIMATED");
     if (mode == "EDIT") then
         editModeProcess(delta);
     elseif (mode == "ANIMATED") then
-        animationModeProcess(delta);
+        animatedModeProcess(delta);
     end
 end)
 

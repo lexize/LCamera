@@ -39,9 +39,7 @@ local TimelineMetatable = {}
 
 ---@return Timeline
 function Timeline_construct()
-    
     local self = {};
-    local metatable = {}
     self.keyframes = {};
     for key, value in pairs(Timeline) do
         self[key] = value;
@@ -133,6 +131,10 @@ function Timeline.getLenght(self)
     local timecodes = getSortedKeys(keyframes);
     if (#timecodes < 1) then return 0 end
     return timecodes[#timecodes];
+end
+
+function Timeline.clear(self)
+    rawset(self, "keyframes", {});
 end
 
 function TimelineMetatable.__newindex(self, key, value)

@@ -114,6 +114,8 @@ events.ENTITY_INIT:register(function ()
     renderElements.keyframeSidebarEasingIcon = hud:texture():texture("CUSTOM", textures[1]):size(vec(100,100)):uv1(vec(0,0)):uv2(vec(1,1)/6);
     renderElements.keyframeSidebarValueLabel = hud:text():text("Value: ");
     renderElements.keyframeSidebarEasingLabel = hud:text():text("Easing: ");
+
+    renderElements.playingLabel = hud:text():color(vec(1,0.25,0.25,1)):size(2):pos(vec(34,2,0)):text("Playing!");
 end)
 
 events.RENDER:register(function(delta)
@@ -220,6 +222,10 @@ events.RENDER:register(function(delta)
     renderElements.sublineRotZLabel:draw();
 
     --#endregion
+
+    if (editor.playing) then
+        renderElements.playingLabel:draw();
+    end
 
     --#region Rendering keyframe sidebar
     if (editor.selectedKeyframe ~= null) then
