@@ -2,6 +2,7 @@ if (not host:isHost()) then return end
 if (not require("dependency_checker")) then return end;
 
 local Timeline = require("timeline");
+local TextComponent = require("textComponent");
 local camera = require("camera");
 local commandsManager = require("commandsManager");
 local regex = lutils.regex;
@@ -52,16 +53,24 @@ end)
 
 function commandsManager.commands.offset(_, param, ...)
     local timelineContainer = transformTimelines[param];
-    if (timelineContainer == nil) then printJson("No timeline group with name "..param); return end
+    if (timelineContainer == nil) then 
+        local c = TextComponent:text("No timeline group with name "):Color("red")
+        :append(TextComponent:text(param):Color("green")):build();
+        printJson(c); 
+        return 
+    end
     local vals = table.pack(...);
     local axisTable = regex:split(",", vals[1]);
     local offsetsTable = regex:split(",", vals[2]);
-    if (#axisTable ~= #offsetsTable) then printJson("Axes count and offset values count should be same"); return end
+    if (#axisTable ~= #offsetsTable) then 
+        printJson(TextComponent:text("Axes count and offset values count should be same"):Color("red"):build()); 
+        return 
+    end
     local offsets = {};
     for i, v in ipairs(axisTable) do
         local n = tonumber(offsetsTable[i]);
         if (n == nil) then
-            printJson("All values have to be numbers");
+            printJson(TextComponent:text("All values have to be numbers"):Color("red"):build());
             return;
         end
         offsets[v] = n;
@@ -75,7 +84,7 @@ function commandsManager.commands.offset(_, param, ...)
             end
         end
     end
-    printJson("Done");
+    printJson(TextComponent:text("Done"):Color("gold"):build());
 end
 
 function commandsManager.commands.go_to(_, timecode)
@@ -84,7 +93,7 @@ function commandsManager.commands.go_to(_, timecode)
         main.playTime = v;
         return;
     else
-        printJson("Timecode should be number");
+        printJson(TextComponent:text("Timecode should be number"):Color("red"):build());
     end
 end
 

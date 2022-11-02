@@ -1,3 +1,7 @@
+--[[
+    Copy-pasted and rewriten to lua from easings.net
+]]
+
 local easings = {};
 
 function easings.linear(x)
@@ -7,8 +11,6 @@ end
 function easings.step(x)
     if (x < 1) then return 0 else return 1 end
 end
-
--- All easings below was taken from https://easings.net
 
 
 --#region Sine easings

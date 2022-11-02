@@ -1,4 +1,7 @@
----@meta timeline
+--[[
+    Script by Lexize#0765
+    Was made for LCamera (github.com/lexize/LCamera)
+]]
 
 ---@class Keyframe
 ---@field easing string Easing name that keyframe uses

@@ -28,6 +28,7 @@ local function commandExecutor(message_text)
                 args = regex:split(" ", argsText);
             end
             f(commandMatch,table.unpack(args));
+            host:appendChatHistory(message_text);
             return nil;
         end
     end

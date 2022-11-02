@@ -3,6 +3,7 @@ if (not require("dependency_checker")) then return end;
 local main = require("main");
 local camera = require("camera");
 local commandsManager = require("commandsManager");
+local TextComponent = require("textComponent");
 local editor = {}
 
 local timelines = {
@@ -47,25 +48,25 @@ editor.selectedLine = main.timelines.pos.x;
 
 function commandsManager.commands.set(_, val)
     local sk = editor.selectedKeyframe;
-    if (sk == nil) then printJson("No selected keyframe"); return end
+    if (sk == nil) then printJson(TextComponent:text("No selected keyframe"):Color("red"):build()); return end
     local v = tonumber(val);
-    if (v == nil) then printJson("Value should be number"); return end
+    if (v == nil) then printJson(TextComponent:text("Value should be number"):Color("red"):build()); return end
     sk.value = v;
 end
 
 function commandsManager.commands.add(_, val)
     local sk = editor.selectedKeyframe;
-    if (sk == nil) then printJson("No selected keyframe"); return end
+    if (sk == nil) then printJson(TextComponent:text("No selected keyframe"):Color("red"):build()); return end
     local v = tonumber(val);
-    if (v == nil) then printJson("Value should be number"); return end
+    if (v == nil) then printJson(TextComponent:text("Value should be number"):Color("red"):build()); return end
     sk.value = sk.value + v;
 end
 
 function commandsManager.commands.sub(_, val)
     local sk = editor.selectedKeyframe;
-    if (sk == nil) then printJson("No selected keyframe"); return end
+    if (sk == nil) then printJson(TextComponent:text("No selected keyframe"):Color("red"):build()); return end
     local v = tonumber(val);
-    if (v == nil) then printJson("Value should be number"); return end
+    if (v == nil) then printJson(TextComponent:text("Value should be number"):Color("red"):build()); return end
     sk.value = sk.value - v;
 end
 
@@ -78,7 +79,7 @@ function commandsManager.commands.clear(_)
     end
     editor.selectedKeyframe = nil;
     editor.selectedKeyframeTimecode = nil;
-    printJson("All keyframes was deleted");
+    printJson(TextComponent:text("All keyframes was deleted"):Color("green"):build());
 end
 
 events.RENDER:register(function(delta)

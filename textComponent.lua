@@ -1,4 +1,10 @@
+--[[
+    Script by Lexize#0765
+    Was made for LCamera (github.com/lexize/LCamera)
+]]
 if (lutils == nil) then return nil end
+
+local json = lutils.json;
 
 local TextComponent = {};
 
@@ -10,119 +16,139 @@ TextComponent.ClickActions = {
     ["copy_to_clipboard"] = "copy_to_clipboard"
 };
 
----@class BaseTextBuilder
-local BaseTextBuilder = {}
+---@class BaseComponentBuilder
+---@field color string Color name or hex color
+---@field extra BaseComponentBuilder[] Children of this builder
+---@field font string Font used by text
+---@field bold boolean Is text Bold
+---@field italic boolean Is text Italic
+---@field underlined boolean Is text Underlined
+---@field strikethrough boolean Is text Strikethrough
+---@field obfuscated boolean Is text Obfuscated
+local BaseComponentBuilder = {}
 
----@class TextBuilder: BaseTextBuilder
-local TextBuilder = {}
+---@class TextComponentBuilder: BaseComponentBuilder
+---@field text string Text of this TextComponent
+local TextComponentBuilder = {}
 
----@return BaseTextBuilder
+---@return BaseComponentBuilder
 local function constructBase()
     local self = {};
-    for key, value in pairs(BaseTextBuilder) do
+    for key, value in pairs(BaseComponentBuilder) do
         self[key] = value;
     end
     return self;
 end
 
+---Creates base text component
 ---@param text string
----@return TextBuilder
+---@return TextComponentBuilder
 function TextComponent:text(text)
     local self = constructBase();
     self.text = text;
-    for key, value in pairs(TextBuilder) do
+    for key, value in pairs(TextComponentBuilder) do
         self[key] = value;
     end
     return self;
 end
 
----@generic T: BaseTextBuilder
+---Sets color of this component
+---@generic T: BaseComponentBuilder
 ---@param color string
 ---@param self T
 ---@return T
-function BaseTextBuilder:Color(color)
+function BaseComponentBuilder:Color(color)
     self.color = color;
     return self;
 end
 
----@generic T: BaseTextBuilder
+---Sets font of this component
+---@generic T: BaseComponentBuilder
 ---@param font string
 ---@param self T
 ---@return T
-function BaseTextBuilder:Font(font)
+function BaseComponentBuilder:Font(font)
     self.font = font;
     return font;
 end
 
----@generic T: BaseTextBuilder
+---Sets Bold state of this component
+---@generic T: BaseComponentBuilder
 ---@param bold boolean
 ---@param self T
 ---@return T
-function BaseTextBuilder:Bold(bold)
+function BaseComponentBuilder:Bold(bold)
     self.bold = bold;
     return self;
 end
 
----@generic T: BaseTextBuilder
+---Sets Italic state of this component
+---@generic T: BaseComponentBuilder
 ---@param italic boolean
 ---@param self T
 ---@return T
-function BaseTextBuilder:Italic(italic)
+function BaseComponentBuilder:Italic(italic)
     self.italic = italic;
     return self;
 end
 
----@generic T: BaseTextBuilder
+---Sets Underlined state of this component
+---@generic T: BaseComponentBuilder
 ---@param underlined boolean
 ---@param self T
 ---@return T
-function BaseTextBuilder:Underlined(underlined)
+function BaseComponentBuilder:Underlined(underlined)
     self.underlined = underlined;
     return self;
 end
 
----@generic T: BaseTextBuilder
+---Sets Strikethrough state of this component
+---@generic T: BaseComponentBuilder
 ---@param strikethrough boolean
 ---@param self T
 ---@return T
-function BaseTextBuilder:Strikethrough(strikethrough)
+function BaseComponentBuilder:Strikethrough(strikethrough)
     self.strikethrough = strikethrough;
     return self;
 end
 
----@generic T: BaseTextBuilder
+---Sets Obfuscated state of this component
+---@generic T: BaseComponentBuilder
 ---@param obfuscated boolean
 ---@param self T
 ---@return T
-function BaseTextBuilder:Obfuscated(obfuscated)
+function BaseComponentBuilder:Obfuscated(obfuscated)
     self.obfuscated = obfuscated;
     return self;
 end
 
----@generic T: BaseTextBuilder
+---Sets click event of this component
+---@generic T: BaseComponentBuilder
 ---@param action ClickAction
 ---@param value string
 ---@param self T
 ---@return T
-function BaseTextBuilder:ClickEvent(action, value)
+function BaseComponentBuilder:ClickEvent(action, value)
     local clickEvent = {action = action, value = value};
     self.clickEvent = clickEvent;
     return self;
 end
 
----@generic T: BaseTextBuilder
+---Removes click event from this component
+---@generic T: BaseComponentBuilder
 ---@param self T
 ---@return T
-function BaseTextBuilder:RemoveClickEvent()
+function BaseComponentBuilder:RemoveClickEvent()
     self.clickEvent = nil;
     return self;
 end
 
----@generic T: BaseTextBuilder
----@param builder BaseTextBuilder
+---Appends another builder to children of this builder
+---@generic T: BaseComponentBuilder
+---@param builder BaseComponentBuilder
 ---@param self T
 ---@return T
-function BaseTextBuilder:append(builder)
+function BaseComponentBuilder:append(builder)
     if (self.extra == nil) then
         self.extra = {};
     end
@@ -130,9 +156,18 @@ function BaseTextBuilder:append(builder)
     return self;
 end
 
+---Builds json text from this builder
+---@generic T: BaseComponentBuilder
+---@param self T
+---@return string
+function BaseComponentBuilder:build()
+    return json:toJson(self);
+end
+
+---Sets text of this component
 ---@param text string
----@return TextBuilder
-function TextBuilder:Text(text)
+---@return TextComponentBuilder
+function TextComponentBuilder:Text(text)
     self.text = text;
     return self;
 end

@@ -4,6 +4,7 @@ local file = lutils.file;
 local json = lutils.json;
 local main = require("main");
 local editor = require("editor");
+local TextComponent = require("textComponent");
 local commandManager = require("commandsManager");
 
 file:init("LCamera");
@@ -53,27 +54,41 @@ end
 
 function commandManager.commands.load(_, name)
     if (not file:exists(name .. ".lcm")) then
-        printJson("Path with name '"..name.."' not found");
+        printJson(TextComponent:text("Path with name "):Color("red"):append(
+            TextComponent:text(name):Color("green")
+        ):append(TextComponent:text(" not found")):build());
         return;
     end
     save_load.load(name);
     editor.selectedKeyframe = nil;
     editor.selectedKeyframeTimecode = nil;
-    printJson("Path successfully loaded");
+    printJson(TextComponent:text("Path successfully loaded"):Color("green"):build());
 end
 
 function commandManager.commands.save(_, name)
     if (file:exists(name .. ".lcm")) then
-        printJson("Path with name '"..name.."' already exists. Use 'lc$force_save "..name.."' to rewrite file.");
+        local c = TextComponent:text("Path with name "):Color("red"):append(
+            TextComponent:text(name):Color("green")
+        ):append(
+            TextComponent:text(" already exists.\n")
+        ):append(
+            TextComponent:text("Use "):Color("white"):append(
+                TextComponent:text("lc$force_save "):Color("green"):append(
+                    TextComponent:text(name):Color("gold"):Bold(true)
+                )
+            ):append(
+                TextComponent:text(" to rewrite file.")
+            )
+        ):build();
+        printJson(c);
         return;
     end
-    save_load.save(name);
-    printJson("Path successfully saved");
+    commandManager.commands.force_save(_, name);
 end
 
 function commandManager.commands.force_save(_, name)
     save_load.save(name);
-    printJson("Path successfully saved");
+    printJson(TextComponent:text("Path successfully saved"):Color("green"):build());
 end
 
 return save_load;

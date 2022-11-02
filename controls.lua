@@ -2,11 +2,12 @@ if (not require("dependency_checker")) then return end;
 
 local main = require("main");
 local controls = {}
+local chatWasOpenOnPrevFrame = false;
 
 local camera = require("camera");
-local path_renderer = require("path_renderer")
-local editor        = require("editor")
-local easings       = require("easings")
+local path_renderer = require("path_renderer");
+local editor        = require("editor");
+local easings       = require("easings");
 
 function lockDefaultKB() 
     return true;
@@ -277,14 +278,15 @@ end
 events.RENDER:register(function(delta)
     delta = delta / 20;
     local mode = camera:getMode();
-    setAllState(editModeKeybinds, mode == "EDIT");
-    setAllState(keybinds, mode == "EDIT" or mode == "ANIMATED");
-    setAllState(animatedModeKeybinds, mode == "ANIMATED");
+    setAllState(editModeKeybinds, (mode == "EDIT") and not chatWasOpenOnPrevFrame);
+    setAllState(keybinds, (mode == "EDIT" or mode == "ANIMATED") and not chatWasOpenOnPrevFrame);
+    setAllState(animatedModeKeybinds, (mode == "ANIMATED") and not chatWasOpenOnPrevFrame);
     if (mode == "EDIT") then
         editModeProcess(delta);
     elseif (mode == "ANIMATED") then
         animatedModeProcess(delta);
     end
+    chatWasOpenOnPrevFrame = host:isChatOpen();
 end)
 
 return controls;

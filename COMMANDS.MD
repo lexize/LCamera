@@ -26,5 +26,4 @@ Saves current path.\
 It can be found in LCamera data folder with name `[path_name].lcm`
 
 ## `lc$go_to [timecode]`
-Moves your pointer to given timecode.\
-Bugged, need to fix that pointer brings always to keyframes (i really have no idea why it acts like that)
+Changes your playtime to given timecode.\

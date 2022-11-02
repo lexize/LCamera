@@ -13,9 +13,12 @@ if (not host:isHost()) then
     local nicknameTask = models.camera.WORLD.addText();
     nicknameTask:pos(0,16,0);
 
-    events.ENTITY_INIT:register(function ()
-        nicknameTask.text(player:getName());
-    end)
+    events.RENDER:register(function()
+        if (player ~= nil) then
+            nicknameTask.text(player:getName());
+            events.RENDER:remove("getNickname");
+        end
+    end, "getNickname")
 end
 
 return client;
