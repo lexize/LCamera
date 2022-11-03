@@ -27,3 +27,6 @@ It can be found in LCamera data folder with name `[path_name].lcm`
 
 ## `lc$go_to [timecode]`
 Changes your playtime to given timecode.\
+
+## `lc$clear`
+Deletes all keyframes.
