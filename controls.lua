@@ -24,6 +24,7 @@ local TimelineBackward = keybind:create("Timeline backward", "key.keyboard.left"
 local PathToggleKeybind = keybind:create("Toggle path visibility", "key.keyboard.p");
 PathToggleKeybind.onPress = function ()
     path_renderer.renderPath = not path_renderer.renderPath;
+    return true;
 end
 
 local keybinds = {}

@@ -7,6 +7,8 @@ local camera = require("camera");
 local commandsManager = require("commandsManager");
 local regex = lutils.regex;
 
+local tickCounter = 0;
+
 ---@type table<string, table<string, Timeline>>
 local transformTimelines = {
     pos = {
@@ -45,10 +47,14 @@ events.RENDER:register(function()
     local p = camera:getCurrentPosition();
     local o = math.clamp((pos-p):length()/2, 0, 1);
     models.camera:setOpacity(o);
+    models.camera:setVisible(camera:getMode() ~= "ANIMATED");
 end)
 
 events.TICK:register(function()
-    pings["lcamera$move"](models.camera.WORLD:getPos(), models.camera.WORLD.RotPoint:getRot());
+    if (tickCounter == 0) then
+        pings["lcamera$move"](models.camera.WORLD:getPos(), models.camera.WORLD.RotPoint:getRot());
+    end
+    tickCounter = (tickCounter + 1) % 5;
 end)
 
 function commandsManager.commands.offset(_, param, ...)
