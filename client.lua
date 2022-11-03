@@ -36,4 +36,5 @@ events.RENDER:register(function(delta)
         models.camera.WORLD.RotPoint:setRot(math.lerp(prevRot, newRot, moveProgress));
         moveProgress = math.min(moveProgress + ((delta / 20) * 4), 1);
     end
+    nicknameTask:enabled(not host:isHost());
 end)
